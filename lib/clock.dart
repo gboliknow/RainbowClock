@@ -7,7 +7,7 @@ const clockPink = Color(0xFFFFC0CB);
 const clockBlue = Color(0xFF1AA7EC);
 const clockPurpleGrey = Color(0xFF1b161b);
 
-const unitAngle = 360 / 60;
+const unitAngle = 6;
 
 class ClockPainter extends CustomPainter {
   const ClockPainter(
@@ -23,9 +23,10 @@ class ClockPainter extends CustomPainter {
 
     _drawClockBody(size, canvas);
 
-    _drawOverlayGradient(size, canvas);
+    _drawGradient(size, canvas);
 
     _drawClockTicks(size, canvas);
+    //  _animateClockTicks(size, canvas);
 
     _drawClockPointers(canvas, size);
   }
@@ -54,8 +55,9 @@ class ClockPainter extends CustomPainter {
     );
   }
 
-  void _drawOverlayGradient(Size size, Canvas canvas) {
+  void _drawGradient(Size size, Canvas canvas) {
     var rect = Rect.fromCircle(center: Offset.zero, radius: size.width * 0.4);
+
     final Path _clockBodyPath = Path()
       ..moveTo(0, 0)
       ..addArc(
@@ -67,20 +69,181 @@ class ClockPainter extends CustomPainter {
     canvas.drawPath(
       _clockBodyPath,
       Paint()
-        ..shader = const LinearGradient(
-          colors: [clockPink, clockBlue],
-          begin: Alignment.topRight,
-          end: Alignment.bottomRight,
-        ).createShader(rect)
+        ..shader = const LinearGradient(colors: [
+          Colors.red,
+          Colors.orange,
+          Colors.yellow,
+          Colors.green,
+          Colors.blue,
+          Colors.indigo,
+          Colors.purple,
+        ]).createShader(rect)
         ..strokeWidth = 30
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke,
     );
   }
 
+  void _drawOverlayGradient(Size size, Canvas canvas) {
+    var rect = Rect.fromCircle(center: Offset.zero, radius: size.width * 0.4);
+    var rect2 = Rect.fromPoints(Offset.zero, Offset(128, 290));
+    final Path _clockBodyPath = Path()
+      ..moveTo(0, 0)
+      ..addArc(
+        rect,
+        -math.pi / 2,
+        (60 * unitAngle).radian,
+      );
+
+    canvas.drawPath(
+      _clockBodyPath,
+      Paint()
+        ..shader = const LinearGradient(
+          colors: [
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+          ],
+          begin: Alignment.topRight,
+          end: Alignment.bottomRight,
+        ).createShader(rect)
+        ..strokeWidth = 30
+        ..strokeCap = StrokeCap.round
+        ..style = PaintingStyle.fill,
+    );
+  }
+
+  void _animateClockTicks(Size size, Canvas canvas) {
+    for (int i = 0; i < 60; i++) {
+      final angle = (i * unitAngle).radian;
+      final startOffset = Offset.fromDirection(angle, size.width * 0.35);
+      final endOffset = Offset.fromDirection(
+          angle, size.width * (_tickMagnitudeFactor(size, i) ?? 0.335));
+
+      canvas.drawLine(
+        startOffset,
+        endOffset,
+        Paint()
+          ..color = _tickColor(i)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2,
+      );
+      _drawAnimatedTickNumber(i, canvas, size);
+    }
+  }
+
   void _drawClockTicks(Size size, Canvas canvas) {
     for (int i = 0; i < 60; i++) {
-      final angle = ((i * unitAngle - 90)).radian;
+      final angle = ((i * unitAngle)).radian;
       final startOffset = Offset.fromDirection(angle, size.width * 0.35);
       final endOffset = Offset.fromDirection(
           angle, size.width * (_tickMagnitudeFactor(size, i) ?? 0.335));
@@ -132,6 +295,36 @@ class ClockPainter extends CustomPainter {
     }
   }
 
+  _drawAnimatedTickNumber(
+    int i,
+    Canvas canvas,
+    Size size,
+  ) {
+    if (_isExactlyCartesianPlane(i) || _isMajorTicks(i)) {
+      final angle = (i * unitAngle).radianFromClockStart;
+      final text = i == 0 ? '12' : (i ~/ 5).toString();
+      final textColor = _tickColor(i);
+      final fontSize = _isExactlyCartesianPlane(i) ? 14.0 : 10.0;
+      final offset =
+          Offset.fromDirection(angle, size.width * 0.28 * secondHand / 30)
+              .translate(-5, -5);
+
+      var textStyle = TextStyle(
+          color: textColor, fontSize: fontSize, fontWeight: FontWeight.w800);
+      TextSpan span = TextSpan(
+        style: textStyle,
+        text: text,
+      );
+      TextPainter tp = TextPainter(
+        text: span,
+        textDirection: TextDirection.ltr,
+        textAlign: TextAlign.center,
+      );
+      tp.layout();
+      tp.paint(canvas, offset);
+    }
+  }
+
   Color _tickColor(int index) {
     if (_isExactlyCartesianPlane(index)) {
       return clockPink;
@@ -148,7 +341,7 @@ class ClockPainter extends CustomPainter {
   void _drawClockPointers(Canvas canvas, Size size) {
     final clockHandPaint = Paint()
       ..color = clockBody
-      ..strokeWidth = 10
+      ..strokeWidth = 5
       ..strokeCap = StrokeCap.round;
 
     canvas.drawLine(
@@ -163,7 +356,6 @@ class ClockPainter extends CustomPainter {
           (hourHand * unitAngle).radianFromClockStart, size.width * 0.2),
       clockHandPaint..strokeWidth = 13,
     );
-
     canvas.drawLine(
       Offset.zero,
       Offset.fromDirection(
@@ -182,7 +374,7 @@ class ClockPainter extends CustomPainter {
         ),
       Colors.black12,
       4,
-      false,
+      true,
     );
 
     canvas.drawCircle(Offset.zero, 20, Paint()..color = clockBody);
